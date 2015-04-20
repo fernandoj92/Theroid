@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.client.thera.theroid" >
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/theroid_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <!-- Activities -->
+        <activity
+            android:name=".presentation.MessageListActivity"
+            android:label="@string/app_name" >
+
+        </activity>
+        <activity
+            android:name=".presentation.MainActivity"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <!-- Content Providers -->
+        <provider
+            android:authorities="com.client.thera.theroid.contentprovider"
+            android:name=".data.MessagesContentProvider">
+        </provider>
+        <!-- Services -->
+        <service android:name=".services.BatteryService" ></service>
+        <service android:name="com.client.thera.theroid.services.RegisterMessageService" ></service>
+        <service android:name="com.client.thera.theroid.services.PostMessageService" ></service>
+
+    </application>
+
+</manifest>

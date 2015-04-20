@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Theroid</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="no_messages">No Messages</string>
+    <string name="menu_delete">Delete</string>
+    <string name="message_list">Messages</string>
+    <string name="start">Start</string>
+    <string name="stop">Stop</string>
+    <string name="send">Send</string>
+</resources>
