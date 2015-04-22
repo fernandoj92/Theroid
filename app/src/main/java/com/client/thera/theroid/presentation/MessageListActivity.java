@@ -3,6 +3,7 @@ package com.client.thera.theroid.presentation;
 import android.app.ListActivity;
 import android.app.LoaderManager;
 import android.content.CursorLoader;
+import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
@@ -12,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
 import com.client.thera.theroid.R;
@@ -34,6 +36,13 @@ public class MessageListActivity extends ListActivity implements LoaderManager.L
         registerForContextMenu(getListView());
     }
 
+    @Override
+    protected void onListItemClick(ListView l, View v, int position, long id) {
+        super.onListItemClick(l, v, position, id);
+        Intent intent = new Intent(this, MessageDetailActivity.class);
+        intent.putExtra("id",id);
+        startActivity(intent);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -82,9 +91,9 @@ public class MessageListActivity extends ListActivity implements LoaderManager.L
     private void fillWithData(){
 
         //Fields from the database (projection)
-        String[] from = new String[]{MessageTable.COLUMN_TEMPERATURE,MessageTable.COLUMN_HEALTH,MessageTable.COLUMN_VOLTAGE,MessageTable.COLUMN_STATUS};
+        String[] from = new String[]{MessageTable.COLUMN_STATUS,MessageTable.COLUMN_EVENT_TIME};
         //Fields on the UI to which we map (Message rows)
-        int[] to = new int[]{R.id.temperature_label,R.id.health_label,R.id.voltage_label,R.id.status_label};
+        int[] to = new int[]{R.id.status_label, R.id.date_label};
 
         getLoaderManager().initLoader(0, null, this);
         adapter = new SimpleCursorAdapter(this, R.layout.message_row, null, from,
@@ -96,7 +105,7 @@ public class MessageListActivity extends ListActivity implements LoaderManager.L
     // creates a new loader after the initLoader () call
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        String[] projection = { MessageTable.COLUMN_ID, MessageTable.COLUMN_TEMPERATURE,MessageTable.COLUMN_HEALTH,MessageTable.COLUMN_VOLTAGE,MessageTable.COLUMN_STATUS };
+        String[] projection = { MessageTable.COLUMN_ID, MessageTable.COLUMN_STATUS, MessageTable.COLUMN_EVENT_TIME };
         CursorLoader cursorLoader = new CursorLoader(this,
                 MessagesContentProvider.CONTENT_URI, projection, null, null, null);
         return cursorLoader;
