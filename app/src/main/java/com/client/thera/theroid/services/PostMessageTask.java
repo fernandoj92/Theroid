@@ -1,7 +1,10 @@
 package com.client.thera.theroid.services;
 
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -16,6 +19,9 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Fer on 01/04/2015.
@@ -34,15 +40,27 @@ public class PostMessageTask extends AsyncTask<Message,Void,Boolean> {//<Input,P
         // HTTP - Deprecated, but easier for now
         HttpClient httpClient = new DefaultHttpClient();
         //REST Service URL
-        HttpPost post = new HttpPost("http://10.0.2.2:2731/Api/Clientes/Cliente");
+        HttpPost post = new HttpPost("http://52.17.158.69/api/messages/save");
         post.setHeader("content-type", "application/json");
         try {
 
             //Constructing JSON Object
             JSONObject data = new JSONObject();
 
-            data.put("Nombre", "Nombre prueba");
-            data.put("Telefono", "Telefono prueba");
+            //DeviceID
+            String deviceID = "";
+
+            //EventTime
+
+            //Content
+            Map<String,String> Content = new HashMap<>();
+            Content.put("Temperature", batteryInfo[0].getTemperature() + "");
+            Content.put("Health", batteryInfo[0].getHealth() + "");
+            Content.put("Voltage", batteryInfo[0].getVoltage() + "");
+
+            data.put("DeviceID",deviceID); //We use a test deviceID (always the same for each device)
+            data.put("EventTime","");//We take it from the DB
+            data.put("Content",Content);
 
             StringEntity entity = new StringEntity(data.toString());
             post.setEntity(entity);
@@ -53,11 +71,10 @@ public class PostMessageTask extends AsyncTask<Message,Void,Boolean> {//<Input,P
             if(respStr.equals("true"))//Ok
             {
                 //Actualizamos la BD con Ok
+
             }
             else{//Error, actualizamos la BD con error
             }
-
-            //Start Register service (NO SE PUEDE EMPEZAR UN SERVICE DESDE OTRO SERVICE)
 
 
         }catch(Exception ex)

@@ -1,7 +1,8 @@
 package com.client.thera.theroid.domain;
 
+import org.joda.time.DateTime;
 import java.io.Serializable;
-import java.util.Date;
+
 
 /**
  * Created by Fer on 17/03/2015.
@@ -13,13 +14,22 @@ public class Message implements Serializable{
     private int health;
     private int voltage;
     private String status;//Pending - Sent - NotSent
-    private Date eventTime;
+    private DateTime eventTime;
 
+    //Old
     public Message(int temperature,int health, int voltage){
         setTemperature(temperature);
         setHealth(health);
         setVoltage(voltage);
         setStatus("Pending");
+    }
+    //New (DateTime form moment of creation)
+    public Message(int temperature,int health, int voltage, DateTime eventTime){
+        setTemperature(temperature);
+        setHealth(health);
+        setVoltage(voltage);
+        setStatus("Pending");
+        setEventTime(eventTime);
     }
 
     public int getTemperature() {
@@ -54,11 +64,11 @@ public class Message implements Serializable{
         this.status = status;
     }
 
-    public void setEventTime(Date eventTime) {
+    public void setEventTime(DateTime eventTime) {
         this.eventTime = eventTime;
     }
 
-    public Date getEventTime(){return this.eventTime;}
+    public DateTime getEventTime(){return this.eventTime;}
 
 
 }

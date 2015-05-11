@@ -23,7 +23,8 @@ public class MessageTable {
                                                 "Health INTEGER," +
                                                 "Voltage INTEGER," +
                                                 "Status VARCHAR," +
-                                                "EventTime DATETIME DEFAULT CURRENT_TIMESTAMP)";
+                                               // "EventTime INTEGER)";
+                                                "EventTime TEXT NOT NULL)";
 
     private Context context;
     private TheroidDbHelper dbHelper;

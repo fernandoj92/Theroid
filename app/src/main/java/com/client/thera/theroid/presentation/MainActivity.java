@@ -2,6 +2,7 @@ package com.client.thera.theroid.presentation;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -18,8 +19,11 @@ import com.client.thera.theroid.data.MessagesContentProvider;
 import com.client.thera.theroid.domain.Message;
 import com.client.thera.theroid.services.BatteryService;
 import com.client.thera.theroid.services.PostMessageService;
+import com.client.thera.theroid.services.PostMessageTask;
 import com.client.thera.theroid.services.RegisterMessageService;
 import com.client.thera.theroid.services.RegisterMessageTask;
+
+import org.joda.time.DateTime;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -86,8 +90,14 @@ public class MainActivity extends Activity {
     }
 
     public void sendBatteryInfo(View view){
+        //EventTime
+        batteryInfo.setEventTime(DateTime.now());
+        //Store data into the SQLite DB
         RegisterMessageTask registerTask = new RegisterMessageTask(getApplicationContext());
         registerTask.execute(batteryInfo);
+        //Send it to the server
+        PostMessageTask postMessageTask = new PostMessageTask(getApplicationContext());
+        //postMessageTask.execute(batteryInfo);
     }
 
     public void startRegisterService(View view){

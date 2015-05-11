@@ -9,6 +9,9 @@ import com.client.thera.theroid.data.MessageTable;
 import com.client.thera.theroid.data.MessagesContentProvider;
 import com.client.thera.theroid.domain.Message;
 
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
 /**
  * Created by Fer on 01/04/2015.
  */
@@ -32,6 +35,9 @@ public class RegisterMessageTask extends AsyncTask<Message,Void,Boolean> {//<Inp
                 values.put(MessageTable.COLUMN_HEALTH, message.getHealth());
                 values.put(MessageTable.COLUMN_VOLTAGE, message.getVoltage());
                 values.put(MessageTable.COLUMN_STATUS, message.getStatus());
+                //SQLite DateTime Format needed
+                DateTimeFormatter dtfOut = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+                values.put(MessageTable.COLUMN_EVENT_TIME,dtfOut.print(message.getEventTime()));
                 //Calls the Content Resolver for the insertion in the MessagesContentProvider
                 context.getContentResolver().insert(MessagesContentProvider.CONTENT_URI, values);
             }

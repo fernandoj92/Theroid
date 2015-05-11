@@ -13,4 +13,5 @@
     <string name="temperature_label">Temperature:</string>
     <string name="voltage_label">Voltage:</string>
     <string name="health_label">Battery Health:</string>
+    <string name="eventTime_label">Event Time:</string>
 </resources>

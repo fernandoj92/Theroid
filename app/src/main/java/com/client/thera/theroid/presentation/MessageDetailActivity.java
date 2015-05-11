@@ -23,6 +23,8 @@ import com.client.thera.theroid.services.PostMessageService;
 import com.client.thera.theroid.services.RegisterMessageService;
 import com.client.thera.theroid.services.RegisterMessageTask;
 
+import org.joda.time.DateTime;
+
 import java.sql.Date;
 import java.util.UUID;
 
@@ -36,6 +38,7 @@ public class MessageDetailActivity extends Activity {
     private int health = -2;
     private int voltage = -3;
     private long _id = 0;
+    private String eventTime="Undefined";
 
 
     @Override
@@ -43,9 +46,9 @@ public class MessageDetailActivity extends Activity {
         super.onCreate(savedInstanceState);
         long id = getIntent().getLongExtra("id",0);//TODO: -1 con excepcion mejor que 0?
 
-        //DB query
+        //DB query using the row Id
         Uri selectUri = ContentUris.withAppendedId(MessagesContentProvider.CONTENT_URI,id);
-        String[] projection = { MessageTable.COLUMN_ID, MessageTable.COLUMN_TEMPERATURE, MessageTable.COLUMN_HEALTH, MessageTable.COLUMN_VOLTAGE };
+        String[] projection = { MessageTable.COLUMN_ID, MessageTable.COLUMN_TEMPERATURE, MessageTable.COLUMN_HEALTH, MessageTable.COLUMN_VOLTAGE, MessageTable.COLUMN_EVENT_TIME };
         Cursor cursor = getContentResolver().query(selectUri,projection,null,null,null);
         if(cursor != null){
             if(cursor.moveToFirst()){
@@ -54,6 +57,10 @@ public class MessageDetailActivity extends Activity {
                     temperature = cursor.getInt(cursor.getColumnIndex("Temperature"));
                     health = cursor.getInt(cursor.getColumnIndex("Health"));
                     voltage = cursor.getInt(cursor.getColumnIndex("Voltage"));
+                    eventTime = cursor.getString(cursor.getColumnIndex("EventTime"));
+                    //long milliseconds = cursor.getInt(cursor.getColumnIndex("EvenTime"));
+                    //eventtime = new DateTime(milliseconds);
+
                 }while (cursor.moveToNext());
 
             }
@@ -70,6 +77,9 @@ public class MessageDetailActivity extends Activity {
 
         TextView healthDetailView = (TextView) findViewById(R.id.health_detail);
         healthDetailView.setText(""+health);
+
+        TextView eventTimeDetailView = (TextView) findViewById(R.id.eventTime_detail);
+        eventTimeDetailView.setText(eventTime);
 
 
     }
