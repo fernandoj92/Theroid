@@ -23,9 +23,9 @@ public class RegisterMessageService extends IntentService{
         Message message = (Message) workIntent.getSerializableExtra("message");
         //Creates a value to insert
         ContentValues values = new ContentValues();
-        values.put(MessageTable.COLUMN_TEMPERATURE,message.getTemperature());
-        values.put(MessageTable.COLUMN_HEALTH,message.getHealth());
-        values.put(MessageTable.COLUMN_VOLTAGE,message.getVoltage());
+        values.put(MessageTable.COLUMN_TEMPERATURE,message.getContent().getTemperature());
+        values.put(MessageTable.COLUMN_HEALTH,message.getContent().getHealth());
+        values.put(MessageTable.COLUMN_VOLTAGE,message.getContent().getVoltage());
         values.put(MessageTable.COLUMN_STATUS,message.getStatus());
         //Calls the Content Resolver for the insertion in the MessagesContentProvider
         getContentResolver().insert(MessagesContentProvider.CONTENT_URI,values);

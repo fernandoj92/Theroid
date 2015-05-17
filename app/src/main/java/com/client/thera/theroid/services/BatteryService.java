@@ -13,6 +13,9 @@ import com.client.thera.theroid.data.MessageTable;
 import com.client.thera.theroid.data.MessagesContentProvider;
 import com.client.thera.theroid.domain.Message;
 
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
 /**
  * Created by Fer on 25/03/2015.
  */
@@ -37,10 +40,11 @@ public class BatteryService extends Service{
             //Do something with the data
             Thread thread = new Thread(){
                 public void run(){
-                    //Insert data into the DB
                     Message message = new Message(temperature,health,voltage);
+                    //Insert data into the DB
                     insertIntoDB(message);
                     //Send data to WebService
+                    postMessage(message);
                 }
             };
 
@@ -51,10 +55,13 @@ public class BatteryService extends Service{
     private void insertIntoDB(Message message){
         //Creates a value to insert
         ContentValues values = new ContentValues();
-        values.put(MessageTable.COLUMN_TEMPERATURE,message.getTemperature());
-        values.put(MessageTable.COLUMN_HEALTH,message.getHealth());
-        values.put(MessageTable.COLUMN_VOLTAGE,message.getVoltage());
+        values.put(MessageTable.COLUMN_TEMPERATURE,message.getContent().getTemperature());
+        values.put(MessageTable.COLUMN_HEALTH,message.getContent().getHealth());
+        values.put(MessageTable.COLUMN_VOLTAGE,message.getContent().getVoltage());
         values.put(MessageTable.COLUMN_STATUS,message.getStatus());
+        //SQLite DateTime Format needed
+        DateTimeFormatter dtfOut = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+        values.put(MessageTable.COLUMN_EVENT_TIME,dtfOut.print(message.getEventTime()));
         //Calls the Content Resolver for the insertion in the MessagesContentProvider
         getContentResolver().insert(MessagesContentProvider.CONTENT_URI,values);
     }

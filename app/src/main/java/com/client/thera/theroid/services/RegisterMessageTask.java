@@ -31,9 +31,9 @@ public class RegisterMessageTask extends AsyncTask<Message,Void,Boolean> {//<Inp
             for (Message message : batteryInfo) {
                 //Creates a value to insert
                 ContentValues values = new ContentValues();
-                values.put(MessageTable.COLUMN_TEMPERATURE, message.getTemperature());
-                values.put(MessageTable.COLUMN_HEALTH, message.getHealth());
-                values.put(MessageTable.COLUMN_VOLTAGE, message.getVoltage());
+                values.put(MessageTable.COLUMN_TEMPERATURE, message.getContent().getTemperature());
+                values.put(MessageTable.COLUMN_HEALTH, message.getContent().getHealth());
+                values.put(MessageTable.COLUMN_VOLTAGE, message.getContent().getVoltage());
                 values.put(MessageTable.COLUMN_STATUS, message.getStatus());
                 //SQLite DateTime Format needed
                 DateTimeFormatter dtfOut = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
