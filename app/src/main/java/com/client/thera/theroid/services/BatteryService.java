@@ -16,6 +16,8 @@ import com.client.thera.theroid.domain.Message;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import java.text.SimpleDateFormat;
+
 /**
  * Created by Fer on 25/03/2015.
  */
@@ -58,10 +60,10 @@ public class BatteryService extends Service{
         values.put(MessageTable.COLUMN_TEMPERATURE,message.getContent().getTemperature());
         values.put(MessageTable.COLUMN_HEALTH,message.getContent().getHealth());
         values.put(MessageTable.COLUMN_VOLTAGE,message.getContent().getVoltage());
-        values.put(MessageTable.COLUMN_STATUS,message.getStatus());
+        values.put(MessageTable.COLUMN_STATUS,message.getStatus().toString());
         //SQLite DateTime Format needed
-        DateTimeFormatter dtfOut = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
-        values.put(MessageTable.COLUMN_EVENT_TIME,dtfOut.print(message.getEventTime()));
+        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        values.put(MessageTable.COLUMN_EVENT_TIME,sf.format(message.getEventTime()));
         //Calls the Content Resolver for the insertion in the MessagesContentProvider
         getContentResolver().insert(MessagesContentProvider.CONTENT_URI,values);
     }

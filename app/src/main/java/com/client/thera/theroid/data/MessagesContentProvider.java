@@ -79,7 +79,7 @@ public class MessagesContentProvider extends ContentProvider{
                         (!TextUtils.isEmpty(where) ? "AND ("+ where + ')' : "");
                 cursor = db.query(MessageTable.TABLE_NAME, projection, composedWhere, whereArgs, null, null, orderby);
                 break;
-            default: throw new IllegalArgumentException("unsuported uri: "+ uri);
+            default: throw new IllegalArgumentException("unsupported uri: "+ uri);
         }
         // make sure that potential listeners are getting notified
         cursor.setNotificationUri(getContext().getContentResolver(), uri);
@@ -100,7 +100,7 @@ public class MessagesContentProvider extends ContentProvider{
                 throw new IllegalArgumentException("Unknown URI: " + uri);
         }
         getContext().getContentResolver().notifyChange(uri, null);
-        return Uri.parse(BASE_PATH + "/" + id);
+        return Uri.parse(CONTENT_URI + "/" + id);//BASE_PATH changed to CONTENT_URI
     }
 
     @Override

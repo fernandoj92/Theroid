@@ -3,6 +3,8 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="action_messages">Messages</string>
+
     <string name="no_messages">No Messages</string>
     <string name="menu_delete">Delete</string>
     <string name="message_list">Messages</string>
@@ -14,4 +16,9 @@
     <string name="voltage_label">Voltage:</string>
     <string name="health_label">Battery Health:</string>
     <string name="eventTime_label">Event Time:</string>
+
+    <string name="pref_language_title">Language</string>
+    <string name="pref_deliveryMode_title">Delivery Mode</string>
+    <string name="pref_language_defaultValue">Español</string>
+    <string name="pref_deliveryMode_defaultValue">Manual</string>
 </resources>

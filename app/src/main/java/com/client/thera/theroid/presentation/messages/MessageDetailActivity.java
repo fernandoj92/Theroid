@@ -1,37 +1,25 @@
-package com.client.thera.theroid.presentation;
+package com.client.thera.theroid.presentation.messages;
 
-import android.app.Activity;
-import android.content.BroadcastReceiver;
 import android.content.ContentUris;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.BatteryManager;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.RelativeLayout;
+import android.support.v7.app.ActionBarActivity;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.client.thera.theroid.R;
 import com.client.thera.theroid.data.MessageTable;
 import com.client.thera.theroid.data.MessagesContentProvider;
-import com.client.thera.theroid.domain.Message;
-import com.client.thera.theroid.services.BatteryService;
-import com.client.thera.theroid.services.PostMessageService;
 import com.client.thera.theroid.services.RegisterMessageService;
-import com.client.thera.theroid.services.RegisterMessageTask;
-
-import org.joda.time.DateTime;
-
-import java.sql.Date;
-import java.util.UUID;
 
 /**
  * Created by Fer on 17/03/2015.
  */
-public class MessageDetailActivity extends Activity {
+public class MessageDetailActivity extends ActionBarActivity {
    // private String status ="";
    // private String event;
     private int temperature= -1;
@@ -58,8 +46,6 @@ public class MessageDetailActivity extends Activity {
                     health = cursor.getInt(cursor.getColumnIndex("Health"));
                     voltage = cursor.getInt(cursor.getColumnIndex("Voltage"));
                     eventTime = cursor.getString(cursor.getColumnIndex("EventTime"));
-                    //long milliseconds = cursor.getInt(cursor.getColumnIndex("EvenTime"));
-                    //eventtime = new DateTime(milliseconds);
 
                 }while (cursor.moveToNext());
 
@@ -80,14 +66,32 @@ public class MessageDetailActivity extends Activity {
 
         TextView eventTimeDetailView = (TextView) findViewById(R.id.eventTime_detail);
         eventTimeDetailView.setText(eventTime);
-
-
     }
     @Override
     public void onDestroy(){
         super.onDestroy();
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_main, menu);
+        return true;
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                return true;
+            case R.id.action_messages:
+                Intent intent = new Intent(this, MessageListActivity.class);
+                startActivity(intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 }
 

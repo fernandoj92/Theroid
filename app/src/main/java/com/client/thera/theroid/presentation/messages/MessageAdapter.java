@@ -1,4 +1,4 @@
-package com.client.thera.theroid.presentation;
+package com.client.thera.theroid.presentation.messages;
 
 import android.content.Context;
 import android.database.Cursor;

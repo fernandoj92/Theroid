@@ -19,11 +19,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".presentation.MessageListActivity"
+            android:name=".presentation.messages.MessageListActivity"
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name=".presentation.MessageDetailActivity"
+            android:name=".presentation.messages.MessageDetailActivity"
             android:label="@string/app_name" >
         </activity>
         <!-- Content Providers -->
@@ -33,8 +33,6 @@
         </provider>
         <!-- Services -->
         <service android:name=".services.BatteryService" ></service>
-        <service android:name="com.client.thera.theroid.services.RegisterMessageService" ></service>
-        <service android:name="com.client.thera.theroid.services.PostMessageService" ></service>
 
     </application>
 

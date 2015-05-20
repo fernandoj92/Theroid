@@ -1,38 +1,31 @@
 package com.client.thera.theroid.presentation;
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.AsyncTask;
 import android.os.BatteryManager;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
 import com.client.thera.theroid.R;
-import com.client.thera.theroid.data.MessageTable;
-import com.client.thera.theroid.data.MessagesContentProvider;
 import com.client.thera.theroid.domain.Message;
+import com.client.thera.theroid.presentation.messages.MessageListActivity;
 import com.client.thera.theroid.services.BatteryService;
-import com.client.thera.theroid.services.PostMessageService;
 import com.client.thera.theroid.services.PostMessageTask;
 import com.client.thera.theroid.services.RegisterMessageService;
-import com.client.thera.theroid.services.RegisterMessageTask;
 
-import org.joda.time.DateTime;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.Date;
 
 /**
  * Created by Fer on 17/03/2015.
  */
-public class MainActivity extends Activity {
+public class MainActivity extends ActionBarActivity {
 
     private TextView batteryInfoView;
     private Message batteryInfo;
@@ -49,7 +42,7 @@ public class MainActivity extends Activity {
             int  scale= intent.getIntExtra(BatteryManager.EXTRA_SCALE,0);
             int  status= intent.getIntExtra(BatteryManager.EXTRA_STATUS,0);
             String  technology= intent.getExtras().getString(BatteryManager.EXTRA_TECHNOLOGY);
-            int  temperature= intent.getIntExtra(BatteryManager.EXTRA_TEMPERATURE,0);//Devuele 10x la temperatura, para obtener asi el decimal sin ser double
+            int  temperature= intent.getIntExtra(BatteryManager.EXTRA_TEMPERATURE,0);//Devuelve 10x la temperatura, para obtener asi el decimal sin ser double
             int  voltage= intent.getIntExtra(BatteryManager.EXTRA_VOLTAGE,0);//Devuelve 10x el voltage
 
 
@@ -76,7 +69,7 @@ public class MainActivity extends Activity {
         setContentView(R.layout.main);
         batteryInfoView =(TextView)findViewById(R.id.textViewBatteryInfo);
 
-        this.registerReceiver(this.batteryInfoReceiver,	new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+        this.registerReceiver(this.batteryInfoReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
     }
     @Override
     public void onDestroy(){
@@ -84,36 +77,42 @@ public class MainActivity extends Activity {
         unregisterReceiver(batteryInfoReceiver);
     }
 
-    public void showMessageList(View view){
-        Intent intent = new Intent(this, MessageListActivity.class);
-        startActivity(intent);
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_main, menu);
+        return true;
     }
 
-    public void sendBatteryInfo(View view){
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                return true;
+            case R.id.action_messages:
+                Intent intent = new Intent(this, MessageListActivity.class);
+                startActivity(intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+        public void sendBatteryInfo(View view){
         //EventTime
-        batteryInfo.setEventTime(DateTime.now());
-        //Store data into the SQLite DB
-        RegisterMessageTask registerTask = new RegisterMessageTask(getApplicationContext());
-        registerTask.execute(batteryInfo);
-        //Send it to the server
+        batteryInfo.setEventTime(new Date());
+
+        //Store data into the SQLite DB and send it to the server afterwards
         PostMessageTask postMessageTask = new PostMessageTask(getApplicationContext());
-        //postMessageTask.execute(batteryInfo);
+        postMessageTask.execute(batteryInfo);
+
     }
 
-    public void startRegisterService(View view){
-        Intent intent = new Intent(this, RegisterMessageService.class);
-        intent.putExtra("message", UUID.randomUUID().toString());//Random message
-        startService(intent);
-    }
-
-    public void startPostService(View view){
-        Intent intent = new Intent(this, PostMessageService.class);
+    public void startBatteryService(View view){
+        Intent intent = new Intent(this, BatteryService.class);
         intent.putExtra("batteryInfo",batteryInfo);
         startService(intent);
-    }
-
-    public void startBatteryService(){
-
     }
 
     public void stopBatteryService(){

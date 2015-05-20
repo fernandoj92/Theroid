@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <ListPreference
+        android:key="pref_language"
+        android:title="@string/pref_language_title"
+        android:dialogTitle="@string/pref_language_title"
+        android:entries="@array/language"
+        android:entryValues="@array/languageValues"
+        android:defaultValue="@string/pref_language_defaultValue" />
+    <ListPreference
+        android:dependency="pref_language"
+        android:key="pref_deliveryMode"
+        android:title="@string/pref_deliveryMode_title"
+        android:dialogTitle="@string/pref_deliveryMode_title"
+        android:entries="@array/deliveryMode"
+        android:entryValues="@array/languageValues"
+        android:defaultValue="@string/pref_deliveryMode_defaultValue" />
+</PreferenceScreen>

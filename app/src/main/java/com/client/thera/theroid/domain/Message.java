@@ -1,34 +1,43 @@
 package com.client.thera.theroid.domain;
 
-import org.joda.time.DateTime;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+
 import java.io.Serializable;
+import java.util.Date;
 import java.util.UUID;
 
 
 /**
  * Created by Fer on 17/03/2015.
  */
+//TODO: eliminado status, se necesita para ListActivity
+// _id no se parsea a JSON al carecer de un Getter
 public class Message implements Serializable{
+
+    public enum Status{PENDING, SENT_OK, SENT_ERROR, TIMEOUT}
 
     public static class Content{
         private int temperature;
         private int health;
         private int voltage;
 
+        @JsonSerialize(using=ToStringSerializer.class)
         public int getTemperature() {
             return temperature;
         }
         public void setTemperature(int temperature) {
             this.temperature = temperature;
         }
-
+        @JsonSerialize(using=ToStringSerializer.class)
         public int getVoltage() {
             return voltage;
         }
         public void setVoltage(int voltage) {
             this.voltage = voltage;
         }
-
+        @JsonSerialize(using=ToStringSerializer.class)
         public int getHealth() {
             return health;
         }
@@ -37,11 +46,11 @@ public class Message implements Serializable{
         }
     }
 
-    private int _id;
+    private int _id;//Used by the ListActivity
     private UUID deviceID;
-    private String status;//Pending - Sent - NotSent TODO: Convert it into an 'enum'
-    private DateTime eventTime;
+    private Date eventTime;
     private Content content;
+    private Status status;
 
     //Old
     public Message(int temperature,int health, int voltage){
@@ -49,30 +58,23 @@ public class Message implements Serializable{
         getContent().setTemperature(temperature);
         getContent().setHealth(health);
         getContent().setVoltage(voltage);
-        setStatus("Pending");
+        setStatus(Status.PENDING);
     }
     //New (DateTime for the moment of creation)
-    public Message(int temperature,int health, int voltage, DateTime eventTime){
+    public Message(int temperature,int health, int voltage, Date eventTime){
         setContent(new Content());
         getContent().setTemperature(temperature);
         getContent().setHealth(health);
         getContent().setVoltage(voltage);
-        setStatus("Pending");
         setEventTime(eventTime);
+        setStatus(Status.PENDING);
     }
 
 
-    public String getStatus() {
-        return status;
-    }
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public void setEventTime(DateTime eventTime) {
+    public void setEventTime(Date eventTime) {
         this.eventTime = eventTime;
     }
-    public DateTime getEventTime(){return this.eventTime;}
+    public Date getEventTime(){return this.eventTime;}
 
     public UUID getDeviceID() {
         return deviceID;
@@ -87,5 +89,11 @@ public class Message implements Serializable{
     public void setContent(Content content) {
         this.content = content;
     }
-
+    @JsonIgnore
+    public Status getStatus() {
+        return status;
+    }
+    public void setStatus(Status status) {
+        this.status = status;
+    }
 }
