@@ -14,7 +14,7 @@ import android.widget.TextView;
 import com.client.thera.theroid.R;
 import com.client.thera.theroid.data.MessageTable;
 import com.client.thera.theroid.data.MessagesContentProvider;
-import com.client.thera.theroid.services.RegisterMessageService;
+
 
 /**
  * Created by Fer on 17/03/2015.
@@ -83,8 +83,6 @@ public class MessageDetailActivity extends ActionBarActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
         switch (item.getItemId()) {
-            case R.id.action_settings:
-                return true;
             case R.id.action_messages:
                 Intent intent = new Intent(this, MessageListActivity.class);
                 startActivity(intent);

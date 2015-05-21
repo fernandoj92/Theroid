@@ -1,5 +1,8 @@
 package com.client.thera.theroid.domain;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
@@ -13,7 +16,7 @@ import java.util.UUID;
  * Created by Fer on 17/03/2015.
  */
 //TODO: eliminado status, se necesita para ListActivity
-// _id no se parsea a JSON al carecer de un Getter
+// _id is not parsed to JSON because it doesn't have a Getter method
 public class Message implements Serializable{
 
     public enum Status{PENDING, SENT_OK, SENT_ERROR, TIMEOUT}
@@ -46,7 +49,7 @@ public class Message implements Serializable{
         }
     }
 
-    private int _id;//Used by the ListActivity
+    private int _id; //Used internally by the ListActivity
     private UUID deviceID;
     private Date eventTime;
     private Content content;
@@ -69,6 +72,7 @@ public class Message implements Serializable{
         setEventTime(eventTime);
         setStatus(Status.PENDING);
     }
+
 
 
     public void setEventTime(Date eventTime) {

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="language">
+        <item name="ES">Español</item>
+        <item name="ENG">English</item>
+    </string-array>
+    <string-array name="languageValues">
+        <item name="ES">Español</item>
+        <item name="ENG">English</item>
+    </string-array>
+    <string-array name="deliveryMode">
+        <item name="manual">Manual</item>
+        <item name="automatic">Automatico</item>
+    </string-array>
+    <string-array name="deliveryModeValues">
+        <item name="manual">Manual</item>
+        <item name="automatic">Automatico</item>
+    </string-array>
+</resources>

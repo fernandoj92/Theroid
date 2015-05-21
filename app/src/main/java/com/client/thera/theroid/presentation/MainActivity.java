@@ -16,9 +16,9 @@ import android.widget.TextView;
 import com.client.thera.theroid.R;
 import com.client.thera.theroid.domain.Message;
 import com.client.thera.theroid.presentation.messages.MessageListActivity;
+import com.client.thera.theroid.presentation.settings.SettingsActivity;
 import com.client.thera.theroid.services.BatteryService;
 import com.client.thera.theroid.services.PostMessageTask;
-import com.client.thera.theroid.services.RegisterMessageService;
 
 import java.util.Date;
 
@@ -37,26 +37,23 @@ public class MainActivity extends ActionBarActivity {
             int  health= intent.getIntExtra(BatteryManager.EXTRA_HEALTH,0);
             int  icon_small= intent.getIntExtra(BatteryManager.EXTRA_ICON_SMALL,0);
             int  level= intent.getIntExtra(BatteryManager.EXTRA_LEVEL,0);
-            int  plugged= intent.getIntExtra(BatteryManager.EXTRA_PLUGGED,0);
+            int  plugged= intent.getIntExtra(BatteryManager.EXTRA_PLUGGED, 0);
             boolean  present= intent.getExtras().getBoolean(BatteryManager.EXTRA_PRESENT);
-            int  scale= intent.getIntExtra(BatteryManager.EXTRA_SCALE,0);
-            int  status= intent.getIntExtra(BatteryManager.EXTRA_STATUS,0);
+            int  scale= intent.getIntExtra(BatteryManager.EXTRA_SCALE, 0);
+            int  status= intent.getIntExtra(BatteryManager.EXTRA_STATUS, 0);
             String  technology= intent.getExtras().getString(BatteryManager.EXTRA_TECHNOLOGY);
-            int  temperature= intent.getIntExtra(BatteryManager.EXTRA_TEMPERATURE,0);//Devuelve 10x la temperatura, para obtener asi el decimal sin ser double
-            int  voltage= intent.getIntExtra(BatteryManager.EXTRA_VOLTAGE,0);//Devuelve 10x el voltage
+            int  temperature= intent.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, 0);//Devuelve 10x la temperatura, para obtener asi el decimal sin ser double
+            int  voltage= intent.getIntExtra(BatteryManager.EXTRA_VOLTAGE, 0);//Devuelve 10x el voltage
 
+            //We only set a few parameters (need some tweaks)
+            TextView temperatureDetailView = (TextView) findViewById(R.id.temperature_main_detail);
+            temperatureDetailView.setText(""+temperature);
 
-            batteryInfoView.setText(
-                    "Health: " + health + "\n" +
-                            "Icon Small:" + icon_small + "\n" +
-                            "Level: " + level + "\n" +
-                            "Plugged: " + plugged + "\n" +
-                            "Present: " + present + "\n" +
-                            "Scale: " + scale + "\n" +
-                            "Status: " + status + "\n" +
-                            "Technology: " + technology + "\n" +
-                            "Temperature: " + temperature + "\n" +
-                            "Voltage: " + voltage + "\n");
+            TextView voltageDetailView = (TextView) findViewById(R.id.voltage_main_detail);
+            voltageDetailView.setText(""+voltage);
+
+            TextView healthDetailView = (TextView) findViewById(R.id.health_main_detail);
+            healthDetailView.setText(""+health);
 
             batteryInfo = new Message(temperature,health,voltage);
         }
@@ -67,7 +64,6 @@ public class MainActivity extends ActionBarActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-        batteryInfoView =(TextView)findViewById(R.id.textViewBatteryInfo);
 
         this.registerReceiver(this.batteryInfoReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
     }
@@ -89,10 +85,12 @@ public class MainActivity extends ActionBarActivity {
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.action_settings:
+                Intent settingsIntent = new Intent(this, SettingsActivity.class);
+                startActivity(settingsIntent);
                 return true;
             case R.id.action_messages:
-                Intent intent = new Intent(this, MessageListActivity.class);
-                startActivity(intent);
+                Intent messagesIntent = new Intent(this, MessageListActivity.class);
+                startActivity(messagesIntent);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -111,11 +109,13 @@ public class MainActivity extends ActionBarActivity {
 
     public void startBatteryService(View view){
         Intent intent = new Intent(this, BatteryService.class);
-        intent.putExtra("batteryInfo",batteryInfo);
+        //Bundle bundle = new Bundle();
+        //bundle.putSerializable("batteryInfo",batteryInfo);
+        //intent.putExtras(bundle);
         startService(intent);
     }
 
-    public void stopBatteryService(){
+    public void stopBatteryService(View view){
         Intent intent = new Intent(this, BatteryService.class);
         stopService(intent);
     }

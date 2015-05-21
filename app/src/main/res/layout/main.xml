@@ -4,10 +4,85 @@
     android:layout_height="match_parent">
 
     <TextView
-    android:id="@+id/textViewBatteryInfo"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="Battery Info: " />
+        android:id="@+id/temperature_main_detail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:lines="1"
+        android:text="@+id/temperature_main_detail"
+        android:textSize="15dp"
+        android:layout_marginTop="63dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/temperature_main_txt"
+        android:layout_toEndOf="@+id/temperature_txt" />
+    <TextView
+        android:id="@+id/health_main_detail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:lines="1"
+        android:text="@+id/health_main_detail"
+        android:textSize="15dp"
+        android:layout_marginTop="35dp"
+        android:layout_below="@+id/temperature_main_detail"
+        android:layout_alignLeft="@+id/temperature_main_detail"
+        android:layout_alignStart="@+id/temperature_main_detail" />
+    <TextView
+        android:id="@+id/voltage_main_detail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:lines="1"
+        android:text="@+id/voltage_main_detail"
+        android:textSize="15dp"
+        android:layout_marginTop="35dp"
+        android:layout_below="@+id/health_main_detail"
+        android:layout_alignLeft="@+id/health_main_detail"
+        android:layout_alignStart="@+id/health_main_detail" />
+
+    <TextView
+        android:id="@+id/temperature_main_txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:lines="1"
+        android:text="@string/temperature_label"
+        android:textSize="15dp"
+        android:layout_above="@+id/health_main_detail"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="28dp"
+        android:layout_marginStart="28dp" />
+
+    <TextView
+        android:id="@+id/health_main_txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:lines="1"
+        android:text="@string/health_label"
+        android:textSize="15dp"
+        android:layout_alignTop="@+id/health_main_detail"
+        android:layout_alignLeft="@+id/temperature_main_txt"
+        android:layout_alignStart="@+id/temperature_main_txt" />
+
+    <TextView
+        android:id="@+id/voltage_main_txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:lines="1"
+        android:text="@string/voltage_label"
+        android:textSize="15dp"
+        android:layout_alignTop="@+id/voltage_main_detail"
+        android:layout_alignLeft="@+id/health_main_txt"
+        android:layout_alignStart="@+id/health_main_txt" />
+
+    <TextView
+        android:id="@+id/message_detail_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/battery_data_label"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp" />
 
 
     <Button
@@ -19,8 +94,34 @@
         android:onClick="sendBatteryInfo"
         android:layout_gravity="center_horizontal"
         android:id="@+id/button3"
-        android:layout_alignParentBottom="true"
+        android:layout_below="@+id/voltage_main_detail"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="126dp" />
+        android:layout_marginTop="91dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/start"
+        android:textSize="24dp"
+        android:padding="14dp"
+        android:onClick="startBatteryService"
+        android:layout_gravity="center_horizontal"
+        android:id="@+id/button4"
+        android:layout_below="@+id/voltage_main_detail"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="161dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/stop"
+        android:textSize="24dp"
+        android:padding="14dp"
+        android:onClick="stopBatteryService"
+        android:layout_gravity="center_horizontal"
+        android:id="@+id/button5"
+        android:layout_below="@+id/voltage_main_detail"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="231dp" />
 
 </RelativeLayout>

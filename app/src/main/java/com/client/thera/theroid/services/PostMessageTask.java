@@ -1,9 +1,7 @@
 package com.client.thera.theroid.services;
 
-import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -12,8 +10,8 @@ import android.widget.Toast;
 import com.client.thera.theroid.data.MessageTable;
 import com.client.thera.theroid.data.MessagesContentProvider;
 import com.client.thera.theroid.domain.Message;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.joda.JodaModule;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -24,13 +22,9 @@ import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.util.EntityUtils;
-import org.joda.time.DateTime;
 import org.json.JSONObject;
 
-import java.io.StringWriter;
 import java.text.SimpleDateFormat;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -93,11 +87,11 @@ public class PostMessageTask extends AsyncTask<Message,Void,Boolean> {//<Input,P
     private Boolean sendData(Message message){
         // HTTP - Deprecated, but easier for now
         final HttpParams httpParams = new BasicHttpParams();
-        HttpConnectionParams.setConnectionTimeout(httpParams, 4000);//TCP connection timeout = 4 seconds
-        HttpConnectionParams.setSoTimeout(httpParams, 4000);//Wait_For_Response timeout = 4 seconds
+        HttpConnectionParams.setConnectionTimeout(httpParams, 3000);//TCP connection timeout = 3 seconds
+        HttpConnectionParams.setSoTimeout(httpParams, 3000);//Wait_For_Response timeout = 3 seconds
         HttpClient httpClient = new DefaultHttpClient(httpParams);
         //REST Service URL
-        HttpPost post = new HttpPost("http://10.0.2.2:9000/api/messages/save");
+        HttpPost post = new HttpPost("http://54.76.225.140/api/messages/save");
         post.setHeader("content-type", "application/json");
         try {
 
@@ -109,14 +103,17 @@ public class PostMessageTask extends AsyncTask<Message,Void,Boolean> {//<Input,P
 
 
             HttpResponse resp = httpClient.execute(post);
-            String respStr = EntityUtils.toString(resp.getEntity());
 
             //Expected "Ok" response (JSON)
             JSONObject okResponse = new JSONObject();
             okResponse.put("status","OK");
             okResponse.put("message date",message.getEventTime().getTime());
 
-            if(respStr.equals(okResponse.toString())){
+            //Create 2 JsonNode Objects
+            JsonNode respTree = mapper.readTree(EntityUtils.toString(resp.getEntity()));
+            JsonNode okRespTree = mapper.readTree(okResponse.toString());
+
+            if(respTree.equals(okRespTree)){
                 //Actualizamos la BD con Ok
                 ContentValues values = new ContentValues();
                 values.put(MessageTable.COLUMN_STATUS, Message.Status.SENT_OK.toString());

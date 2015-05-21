@@ -6,22 +6,38 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.Uri;
 import android.os.BatteryManager;
 import android.os.IBinder;
+import android.util.Log;
 
 import com.client.thera.theroid.data.MessageTable;
 import com.client.thera.theroid.data.MessagesContentProvider;
 import com.client.thera.theroid.domain.Message;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.UUID;
 
 /**
  * Created by Fer on 25/03/2015.
  */
 public class BatteryService extends Service{
+
+    private Uri messageInsertedUri= Uri.EMPTY;
 
     private BroadcastReceiver batteryInfoReceiver = new BroadcastReceiver() {
 
@@ -42,10 +58,10 @@ public class BatteryService extends Service{
             //Do something with the data
             Thread thread = new Thread(){
                 public void run(){
-                    Message message = new Message(temperature,health,voltage);
-                    //Insert data into the DB
+                    Message message = new Message(temperature,health,voltage,new Date());
+                    //Insert data into the DB (fast)
                     insertIntoDB(message);
-                    //Send data to WebService
+                    //Send data to WebService (uncertain)
                     postMessage(message);
                 }
             };
@@ -55,21 +71,77 @@ public class BatteryService extends Service{
     };
 
     private void insertIntoDB(Message message){
-        //Creates a value to insert
-        ContentValues values = new ContentValues();
-        values.put(MessageTable.COLUMN_TEMPERATURE,message.getContent().getTemperature());
-        values.put(MessageTable.COLUMN_HEALTH,message.getContent().getHealth());
-        values.put(MessageTable.COLUMN_VOLTAGE,message.getContent().getVoltage());
-        values.put(MessageTable.COLUMN_STATUS,message.getStatus().toString());
-        //SQLite DateTime Format needed
-        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        values.put(MessageTable.COLUMN_EVENT_TIME,sf.format(message.getEventTime()));
-        //Calls the Content Resolver for the insertion in the MessagesContentProvider
-        getContentResolver().insert(MessagesContentProvider.CONTENT_URI,values);
+
+        try {
+
+            //Creates a value to insert
+            ContentValues values = new ContentValues();
+            values.put(MessageTable.COLUMN_TEMPERATURE, message.getContent().getTemperature());
+            values.put(MessageTable.COLUMN_HEALTH, message.getContent().getHealth());
+            values.put(MessageTable.COLUMN_VOLTAGE, message.getContent().getVoltage());
+            values.put(MessageTable.COLUMN_STATUS, message.getStatus().toString());
+            //SQLite DateTime Format needed
+            SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            values.put(MessageTable.COLUMN_EVENT_TIME,sf.format(message.getEventTime()));
+            //Calls the Content Resolver for the insertion in the MessagesContentProvider
+            messageInsertedUri = getApplicationContext().getContentResolver().insert(MessagesContentProvider.CONTENT_URI, values);
+
+        }catch(Exception e){
+            Log.e("BatteryService", "Unexpected Error");
+        }
     }
 
     private void postMessage(Message message){
-        //TODO implementation...
+        // HTTP - Deprecated, but easier for now
+        final HttpParams httpParams = new BasicHttpParams();
+        HttpConnectionParams.setConnectionTimeout(httpParams, 3000);//TCP connection timeout = 3 seconds
+        HttpConnectionParams.setSoTimeout(httpParams, 3000);//Wait_For_Response timeout = 3 seconds
+        HttpClient httpClient = new DefaultHttpClient(httpParams);
+        //REST Service URL
+        HttpPost post = new HttpPost("http://54.76.225.140/api/messages/save");
+        post.setHeader("content-type", "application/json");
+        try {
+
+            message.setDeviceID(UUID.fromString("671ef2f3-cd54-42c8-9598-57e0ace17c1a"));//TODO: add it to the constructor of Message.class
+            ObjectMapper mapper = new ObjectMapper(); //TODO: Create one once the activity is created so i do not have to create one on each send...
+            String jsonAsString = mapper.writeValueAsString(message);
+            StringEntity entity = new StringEntity(jsonAsString);
+            post.setEntity(entity);
+
+
+            HttpResponse resp = httpClient.execute(post);
+
+            //Expected "Ok" response (JSON)
+            JSONObject okResponse = new JSONObject();
+            okResponse.put("status","OK");
+            okResponse.put("message date",message.getEventTime().getTime());
+
+            //Create 2 JsonNode Objects
+            JsonNode respTree = mapper.readTree(EntityUtils.toString(resp.getEntity()));
+            JsonNode okRespTree = mapper.readTree(okResponse.toString());
+
+            if(respTree.equals(okRespTree)){
+                //Actualizamos la BD con Ok
+                ContentValues values = new ContentValues();
+                values.put(MessageTable.COLUMN_STATUS, Message.Status.SENT_OK.toString());
+                getApplicationContext().getContentResolver().update(messageInsertedUri, values, null, null);
+            }
+            else{
+                //Actualizamos la BD con Error
+                ContentValues values = new ContentValues();
+                values.put(MessageTable.COLUMN_STATUS, Message.Status.SENT_ERROR.toString());
+                getApplicationContext().getContentResolver().update(messageInsertedUri,values,null,null);
+            }
+
+
+        }catch(Exception ex)
+        {
+            Log.e("REST Service", "Generic Error", ex);
+            //Actualizamos la BD con TIMEOUT
+            ContentValues values = new ContentValues();
+            values.put(MessageTable.COLUMN_STATUS, Message.Status.TIMEOUT.toString());
+            getApplicationContext().getContentResolver().update(messageInsertedUri, values, null, null);
+        }
     }
 
     @Override
